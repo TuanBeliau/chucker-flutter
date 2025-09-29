@@ -4,7 +4,7 @@ import 'package:chopper/chopper.dart';
 import 'package:chucker_flutter/src/loggers/logger.dart';
 import 'package:http/http.dart' as http;
 
-///Logs http request and response data
+/// Logs http request and response data
 class ChuckerHttpLoggingInterceptor implements Interceptor {
   @override
   FutureOr<Response<BodyType>> intercept<BodyType>(
@@ -15,6 +15,7 @@ class ChuckerHttpLoggingInterceptor implements Interceptor {
     requestBase.headers.forEach((k, v) => Logger.request('$k: $v'));
 
     var bytes = '';
+    // 🔹 Fix: hanya akses body kalau instance http.Request
     if (requestBase is http.Request) {
       final body = requestBase.body;
       if (body.isNotEmpty) {
@@ -33,11 +34,12 @@ class ChuckerHttpLoggingInterceptor implements Interceptor {
     response.base.headers.forEach((k, v) => Logger.response('$k: $v'));
 
     var responseBytes = '';
+    // 🔹 Fix: hanya akses body kalau instance http.Response
     if (response.base is http.Response) {
       final resp = response.base as http.Response;
       if (resp.body.isNotEmpty) {
         Logger.json(resp.body);
-        responseBytes = ' (${response.bodyBytes.length}-byte body)';
+        responseBytes = ' (${resp.bodyBytes.length}-byte body)';
       }
     }
 
